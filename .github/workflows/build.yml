@@ -11,15 +11,27 @@ jobs:
     name: asdf plugin test
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
+        os: [ubuntu-latest, macos-latest]
+        plugin:
+          - clang-format
+          - clang-tidy
+          - clang-query
+          - clang-apply-replacements
+        include:
+          - plugin: clang-format
+            command: clang-format --version
+          - plugin: clang-tidy
+            command: clang-tidy --version
+          - plugin: clang-query
+            command: clang-query --version
+          - plugin: clang-apply-replacements
+            command: clang-apply-replacements --version
     runs-on: ${{ matrix.os }}
     steps:
-      - name: asdf_plugin_test
+      - name: Test ${{ matrix.plugin }}
         uses: asdf-vm/actions/plugin-test@v1
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
         with:
-          plugin: clang-format
-          command: clang-format --version
+          plugin: ${{ matrix.plugin }}
+          command: ${{ matrix.command }}
