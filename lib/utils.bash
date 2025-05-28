@@ -6,7 +6,7 @@ set -euo pipefail
 ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=${ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE:-0}
 ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH=${ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH:-0}
 
-GH_REPO="muttleyxd/clang-tools-static-binaries"
+GH_REPO="cpp-linter/clang-tools-static-binaries"
 PLUGIN_NAME="clang-tools"
 USE_KERNEL=
 USE_ARCH=
