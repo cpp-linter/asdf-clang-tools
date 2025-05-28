@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Test ${{ matrix.plugin }}
-        uses: asdf-vm/actions/plugin-test@v1
+        uses: asdf-vm/actions/plugin-test@v4
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
         with:
