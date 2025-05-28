@@ -1,9 +1,8 @@
-name: Build
+name: Plugin Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 jobs:
@@ -12,27 +11,20 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        plugin:
-          - clang-format
-          - clang-tidy
-          - clang-query
-          - clang-apply-replacements
-        include:
-          - plugin: clang-format
-            command: clang-format --version
-          - plugin: clang-tidy
-            command: clang-tidy --version
-          - plugin: clang-query
-            command: clang-query --version
-          - plugin: clang-apply-replacements
-            command: clang-apply-replacements --version
+        tool:
+          - { plugin: clang-format, command: clang-format --version }
+          - { plugin: clang-query, command: clang-query --version }
+          - { plugin: clang-tidy, command: clang-tidy --version }
+          - { plugin: clang-apply-replacements, command: clang-apply-replacements --version }
+
     runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Test ${{ matrix.plugin }}
+      - name: Test plugin ${{ matrix.tool.plugin }}
         uses: asdf-vm/actions/plugin-test@v4
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
         with:
           giturl: https://github.com/cpp-linter/asdf-clang-tools.git
-          plugin: ${{ matrix.plugin }}
-          command: ${{ matrix.command }}
+          plugin: ${{ matrix.tool.plugin }}
+          command: ${{ matrix.tool.command }}
