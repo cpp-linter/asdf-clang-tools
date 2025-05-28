@@ -32,6 +32,8 @@ jobs:
         run: |
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
+        env:
+          ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
 
       - name: Run ${{ matrix.tool.plugin }} version check
         run: ${{ matrix.tool.command }}
