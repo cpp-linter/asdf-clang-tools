@@ -1,9 +1,8 @@
-name: Build
+name: Plugin Test
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 jobs:
@@ -11,27 +10,30 @@ jobs:
     name: asdf plugin test
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        plugin:
-          - clang-format
-          - clang-tidy
-          - clang-query
-          - clang-apply-replacements
-        include:
-          - plugin: clang-format
-            command: clang-format --version
-          - plugin: clang-tidy
-            command: clang-tidy --version
-          - plugin: clang-query
-            command: clang-query --version
-          - plugin: clang-apply-replacements
-            command: clang-apply-replacements --version
+        os: [ubuntu-latest, macos-13]
+        tool:
+          - { plugin: clang-format, command: "clang-format --version" }
+          - { plugin: clang-query, command: "clang-query --version" }
+          - { plugin: clang-tidy, command: "clang-tidy --version" }
+          - { plugin: clang-apply-replacements, command: "clang-apply-replacements --version" }
+        version: ["18", "19", "20"]
+
     runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Test ${{ matrix.plugin }}
-        uses: asdf-vm/actions/plugin-test@v1
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@v4
+
+      - name: Add plugin ${{ matrix.tool.plugin }}
+        run: |
+          asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
+
+      - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
+        run: |
+          asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
+          asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
-        with:
-          plugin: ${{ matrix.plugin }}
-          command: ${{ matrix.command }}
+
+      - name: Run ${{ matrix.tool.plugin }} version check
+        run: ${{ matrix.tool.command }}
