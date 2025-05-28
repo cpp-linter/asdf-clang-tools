@@ -33,5 +33,6 @@ jobs:
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
         with:
+          giturl: https://github.com/cpp-linter/asdf-clang-tools.git
           plugin: ${{ matrix.plugin }}
           command: ${{ matrix.command }}
