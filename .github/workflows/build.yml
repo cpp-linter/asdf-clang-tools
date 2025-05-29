@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   plugin_test:
@@ -26,7 +28,7 @@ jobs:
 
       - name: Add plugin ${{ matrix.tool.plugin }}
         run: |
-          asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
+          asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git || true
 
       - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
         run: |
