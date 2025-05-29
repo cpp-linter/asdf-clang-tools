@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
-echo "curl"
-echo "jq"
+echo "asdf plugin for clang tools dependencies required:"
+echo ""
+echo "curl and jq"
+echo ""
