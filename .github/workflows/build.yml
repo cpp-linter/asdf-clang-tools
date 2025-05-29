@@ -32,8 +32,6 @@ jobs:
 
       - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
         run: |
-          # check .tool-versions file
-          cat .tool-versions || echo "No .tool-versions file found"
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
         env:
