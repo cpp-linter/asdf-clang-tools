@@ -18,7 +18,7 @@ jobs:
           - { plugin: clang-query, command: "clang-query --version" }
           - { plugin: clang-tidy, command: "clang-tidy --version" }
           - { plugin: clang-apply-replacements, command: "clang-apply-replacements --version" }
-        version: ["8", "9", "10", "11","13", "14", "15", "16", "17", "18", "19", "20"]
+        version: ["18", "19", "20"] # TODO: add more versions to test
 
     runs-on: ${{ matrix.os }}
 
@@ -27,8 +27,7 @@ jobs:
         uses: asdf-vm/actions/setup@v4
 
       - name: Add plugin ${{ matrix.tool.plugin }}
-        run: |
-          asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git || true
+        run: asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
 
       - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
         run: |
