@@ -34,6 +34,7 @@ jobs:
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run ${{ matrix.tool.plugin }} version check
         run: ${{ matrix.tool.command }}
