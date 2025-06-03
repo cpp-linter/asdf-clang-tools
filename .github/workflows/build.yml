@@ -30,6 +30,7 @@ jobs:
 
       - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
         run: |
+          sleep 10 # Allow time for the plugin to be added
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
         env:
