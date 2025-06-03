@@ -40,12 +40,12 @@ jobs:
           max_attempts: 5
           timeout_minutes: 10
           command: asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
+        env:
+          ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
           which ${{ matrix.tool.plugin }}
           ${{ matrix.tool.command }}
-        env:
-          ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
