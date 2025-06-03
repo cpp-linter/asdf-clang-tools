@@ -34,9 +34,15 @@ jobs:
         run: |
           asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
 
-      - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
+      - name: Retry plugin install
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: 5
+          timeout_minutes: 10
+          command: asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
+
+      - name: Test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
-          asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
           which ${{ matrix.tool.plugin }}
           ${{ matrix.tool.command }}
