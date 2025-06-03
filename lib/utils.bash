@@ -6,7 +6,8 @@ set -euo pipefail
 ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=${ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE:-0}
 ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH=${ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH:-0}
 
-GH_REPO="cpp-linter/clang-tools-static-binaries"
+GH_REPO="cpp-linter/clang-tools-static-binaries/"
+GH_REPO_TAG="master-b35c5633"
 PLUGIN_NAME="clang-tools"
 USE_KERNEL=
 USE_ARCH=
@@ -47,7 +48,7 @@ sort_versions() {
 
 fetch_all_assets() {
   curl -s -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/${GH_REPO}/releases |
+    https://api.github.com/repos/${GH_REPO}/releases/tag/${GH_REPO_TAG} |
     jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
 }
 
