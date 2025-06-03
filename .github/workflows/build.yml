@@ -24,18 +24,12 @@ jobs:
       - name: Install asdf
         uses: asdf-vm/actions/setup@v4
 
-      - name: Add plugin ${{ matrix.tool.plugin }}
+      - name: Test plugin ${{ matrix.tool.plugin }} on ${{ matrix.os }} with version ${{ matrix.version }}
         run: |
           asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
-
-      - name: Install and set ${{ matrix.tool.plugin }} to ${{ matrix.version }}
-        run: |
-          sleep 10 # Allow time for the plugin to be added
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }} --home
+          ${{ matrix.tool.command }}
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run ${{ matrix.tool.plugin }} version check
-        run: ${{ matrix.tool.command }}
