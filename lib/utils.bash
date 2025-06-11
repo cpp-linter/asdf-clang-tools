@@ -45,10 +45,16 @@ sort_versions() {
     LC_ALL=C sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
 }
 
+GITHUB_RELEASES_CACHE="${TMPDIR:-/tmp}/clang-tools-releases.json"
+
 fetch_all_assets() {
-  curl -s -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/${GH_REPO}/releases |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+  # Only fetch if cache does not exist or is older than 5 minutes
+  if [ ! -f "$GITHUB_RELEASES_CACHE" ] || [ $(( $(date +%s) - $(stat -c %Y "$GITHUB_RELEASES_CACHE") )) -gt 300 ]; then
+    curl -s -H "Accept: application/vnd.github.v3+json" \
+      "${curl_opts[@]}" \
+      "https://api.github.com/repos/${GH_REPO}/releases" > "$GITHUB_RELEASES_CACHE"
+  fi
+  jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"' < "$GITHUB_RELEASES_CACHE"
 }
 
 validate_platform() {
