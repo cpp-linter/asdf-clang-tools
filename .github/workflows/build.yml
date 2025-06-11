@@ -32,10 +32,14 @@ jobs:
 
       - name: Add plugin ${{ matrix.tool.plugin }}
         run: |
+          echo "Adding plugin ${{ matrix.tool.plugin }}"
           asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
+          echo "Checking JSON structure..."
+          asdf plugin list --json | jq '.'
 
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
+          echo "Installing ${{ matrix.tool.plugin }} version ${{ matrix.version }}"
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
           which ${{ matrix.tool.plugin }}
