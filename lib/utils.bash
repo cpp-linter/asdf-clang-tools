@@ -37,7 +37,7 @@ curl_opts=(-fsSL)
 
 # NOTE: You might want to remove this if clang-tools is not hosted on GitHub releases.
 if [ -n "${GITHUB_TOKEN:-}" ]; then
-  curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_TOKEN")
+  curl_opts=("${curl_opts[@]}" -H "Authorization: Bearer $GITHUB_TOKEN")
 fi
 
 sort_versions() {
