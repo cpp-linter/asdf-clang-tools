@@ -37,7 +37,7 @@ jobs:
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
-          asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
+          asdf local ${{ matrix.tool.plugin }} ${{ matrix.version }}
           which ${{ matrix.tool.plugin }}
           ${{ matrix.tool.command }}
         env:

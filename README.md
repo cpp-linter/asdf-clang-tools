@@ -56,7 +56,7 @@ asdf list all clang-format
 asdf install clang-format latest
 
 # Set a version (on your ~/.tool-versions file)
-asdf set clang-format latest
+asdf local clang-format latest
 
 # Now clang-tools commands are available
 clang-format
