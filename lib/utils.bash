@@ -46,11 +46,14 @@ sort_versions() {
 }
 
 TODAY=$(date +%Y%m%d)
-GITHUB_RELEASES_CACHE="${TMPDIR:-/tmp}/clang-tools-releases-${TODAY}.json"
+CACHE_DIR="${HOME}/.cache/asdf-clang-tools"
+mkdir -p "$CACHE_DIR"
+GITHUB_RELEASES_CACHE="${CACHE_DIR}/clang-tools-releases-${TODAY}.json"
 
 fetch_all_assets() {
   # Only fetch if cache does not exist
   if [ ! -f "$GITHUB_RELEASES_CACHE" ]; then
+    log "Fetching GitHub releases (no cache found)..."
     curl -s -H "Accept: application/vnd.github.v3+json" \
       "${curl_opts[@]}" \
       "https://api.github.com/repos/${GH_REPO}/releases" > "$GITHUB_RELEASES_CACHE"
