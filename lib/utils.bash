@@ -57,6 +57,8 @@ fetch_all_assets() {
     curl -s -H "Accept: application/vnd.github.v3+json" \
       "${curl_opts[@]}" \
       "https://api.github.com/repos/${GH_REPO}/releases" > "$GITHUB_RELEASES_CACHE"
+  else 
+    log "Using cached GitHub releases from $GITHUB_RELEASES_CACHE"
   fi
   jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"' < "$GITHUB_RELEASES_CACHE"
 }
