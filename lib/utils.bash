@@ -48,7 +48,7 @@ sort_versions() {
 fetch_all_assets() {
   curl -s -H "Accept: application/vnd.github.v3+json" \
     https://api.github.com/repos/${GH_REPO}/releases |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+    jq -r '.assets[] | "\(.name) \(.browser_download_url)"'
 }
 
 validate_platform() {
@@ -114,9 +114,11 @@ download_release() {
   validate_platform
 
   # TODO: split output without piping to awk
-  url=$(fetch_all_assets |
-    grep "^${toolname}-${version}_${USE_PLATFORM}\s" |
-    awk '{print $2}')
+  url=$(fetch_all_assets | grep "^${toolname}-${version}_${USE_PLATFORM}\s" | awk '{print $2}')
+
+  if [ -z "$url" ]; then
+    fail "No release asset found for ${toolname} ${version} on ${USE_PLATFORM}. Check asset name and presence."
+  fi
 
   (
     cd "${ASDF_DOWNLOAD_PATH}" || exit 1
