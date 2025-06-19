@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 echo "This is an asdf plugin for installing several clang tools:"
-echo
 echo "- clang-format"
 echo "- clang-tidy"
 echo "- clang-query"
 echo "- clang-apply-replacements"
+echo "See https://github.com/cpp-linter/asdf-clang-tools for more information"
+echo
