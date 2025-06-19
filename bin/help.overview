@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 
-echo "asdf plugin for clang tools - clang-format, clang-tidy, clang-query, clang-apply-replacements, and more"
+echo "This is an asdf plugin for installing several clang tools:"
+echo
+echo "- clang-format"
+echo "- clang-tidy"
+echo "- clang-query"
+echo "- clang-apply-replacements"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-echo "curl"
-echo "jq"
+echo "asdf-clang-tools requires the following dependencies to be installed:"
+echo "- curl"
+echo "- jq"
