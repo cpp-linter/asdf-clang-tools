@@ -48,7 +48,7 @@ sort_versions() {
 fetch_all_assets() {
   curl -s -H "Accept: application/vnd.github.v3+json" \
     https://api.github.com/repos/${GH_REPO}/releases |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+    jq -r '.[] | .assets[] | "\(.name) \(.browser_download_url)"'
 }
 
 validate_platform() {
