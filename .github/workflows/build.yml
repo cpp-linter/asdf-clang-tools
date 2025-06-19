@@ -33,6 +33,7 @@ jobs:
       - name: Add plugin ${{ matrix.tool.plugin }}
         run: |
           asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
+          asdf list all ${{ matrix.tool.plugin }}
 
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
