@@ -46,9 +46,23 @@ sort_versions() {
 }
 
 fetch_all_assets() {
-  curl -s -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/${GH_REPO}/releases |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+  local response
+  response=$(curl "${curl_opts[@]}" -H "Accept: application/vnd.github.v3+json" \
+    "https://api.github.com/repos/${GH_REPO}/releases")
+
+  # Check for GitHub API error (e.g., rate limit exceeded)
+  if echo "$response" | jq -e 'type == "object" and has("message")' >/dev/null; then
+    local message
+    message=$(echo "$response" | jq -r '.message')
+    fail "GitHub API error: $message"
+  fi
+
+  # Validate it's an array
+  if ! echo "$response" | jq -e 'type == "array"' >/dev/null; then
+    fail "Unexpected GitHub response (not a release list array): $response"
+  fi
+
+  echo "$response" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
 }
 
 validate_platform() {
