@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.0.0...v1.1.0) (2025-07-31)
+
+
+### Features
+
+* add devcontainer ([21515ec](https://github.com/cpp-linter/asdf-clang-tools/commit/21515ecf6c1388620c55b4329d39cf4e7f1017b0))
+* update asdf-clang-tools help ([#19](https://github.com/cpp-linter/asdf-clang-tools/issues/19)) ([ae7c923](https://github.com/cpp-linter/asdf-clang-tools/commit/ae7c9236166e6f8d61e6ef264e6bd1cc1de1c002))
+
+
+### Bug Fixes
+
+* plugin test failure and change to `GITHUB_TOKEN` ([#8](https://github.com/cpp-linter/asdf-clang-tools/issues/8)) ([c25b4d8](https://github.com/cpp-linter/asdf-clang-tools/commit/c25b4d889c1071e89fdeb6b554c1a58dc16055d6))
+
 ## 1.0.0 (2025-05-28)
 
 
