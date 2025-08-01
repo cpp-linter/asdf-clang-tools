@@ -46,21 +46,17 @@ sort_versions() {
 }
 
 fetch_all_assets() {
-  local attempts=0
   local releases_json
-  while [ $attempts -lt 5 ]; do
-    releases_json="$(curl -s -H "Accept: application/vnd.github.v3+json" \
-      https://api.github.com/repos/${GH_REPO}/releases)"
-    if echo "$releases_json" | jq -e 'type == "array"' >/dev/null; then
-      echo "$releases_json" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
-      return 0
-    fi
-    log "Failed to fetch releases (attempt $((attempts+1))). Retrying in 2s..."
-    sleep 2
-    attempts=$((attempts+1))
-  done
-  echo "$releases_json" | jq '.'  # Print last error
-  fail "GitHub API did not return a valid releases array after $attempts attempts."
+  releases_json="$(curl -s -H "Accept: application/vnd.github.v3+json" \
+    https://api.github.com/repos/${GH_REPO}/releases)"
+
+  # Validate that the response is an array (successful), otherwise print and fail
+  if ! echo "$releases_json" | jq -e 'type == "array"' >/dev/null; then
+    echo "$releases_json" | jq '.'  # Optionally print error for debugging
+    fail "GitHub API did not return a valid releases array - likely rate-limited or network error."
+  fi
+
+  echo "$releases_json" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
 }
 
 validate_platform() {
