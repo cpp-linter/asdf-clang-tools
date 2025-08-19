@@ -50,9 +50,17 @@ fetch_all_assets() {
   response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
     "https://api.github.com/repos/${GH_REPO}/releases")
   
-  # Check if response is valid JSON and has releases
+  # Check if response is valid JSON
   if ! echo "$response" | jq empty 2>/dev/null; then
     fail "Failed to fetch releases from GitHub API. Invalid JSON response."
+  fi
+  
+  # Check if response is an array (releases endpoint returns array)
+  if ! echo "$response" | jq -e 'type == "array"' >/dev/null 2>&1; then
+    # Response is not an array, likely an error from GitHub API
+    local error_message
+    error_message=$(echo "$response" | jq -r '.message // "Unknown API error"' 2>/dev/null || echo "API returned unexpected format")
+    fail "GitHub API error: ${error_message}. Please check your network connection and GitHub API status."
   fi
   
   # Check if there are any releases
