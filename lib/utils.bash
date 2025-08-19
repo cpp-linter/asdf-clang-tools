@@ -50,10 +50,6 @@ fetch_all_assets() {
   response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
     "https://api.github.com/repos/${GH_REPO}/releases")
   
-  # Debug: Log response type and content for debugging
-  log "DEBUG: Response type: $(echo "$response" | jq -r 'type' 2>/dev/null || echo 'invalid-json')"
-  log "DEBUG: Response preview: $(echo "$response" | head -c 200)"
-  
   # Check if response is valid JSON
   if ! echo "$response" | jq empty 2>/dev/null; then
     fail "Failed to fetch releases from GitHub API. Invalid JSON response."
@@ -74,10 +70,9 @@ fetch_all_assets() {
     fail "No releases found in repository ${GH_REPO}."
   fi
   
-  log "DEBUG: About to extract assets from response"
-  
-  # Extract assets from the first release safely
-  echo "$response" | jq -r '.[0].assets[]? | "\(.name) \(.browser_download_url)"'
+  # Extract assets from the first release safely with built-in type checking
+  # This provides additional protection against edge cases
+  echo "$response" | jq -r 'if type == "array" and length > 0 then .[0].assets[]? | "\(.name) \(.browser_download_url)" else empty end'
 }
 
 validate_platform() {
