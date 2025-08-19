@@ -46,9 +46,24 @@ sort_versions() {
 }
 
 fetch_all_assets() {
-  curl -s -H "Accept: application/vnd.github.v3+json" \
-    https://api.github.com/repos/${GH_REPO}/releases |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+  local response
+  response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+    "https://api.github.com/repos/${GH_REPO}/releases")
+  
+  # Check if response is valid JSON and has releases
+  if ! echo "$response" | jq empty 2>/dev/null; then
+    fail "Failed to fetch releases from GitHub API. Invalid JSON response."
+  fi
+  
+  # Check if there are any releases
+  local release_count
+  release_count=$(echo "$response" | jq 'length')
+  if [ "$release_count" -eq 0 ]; then
+    fail "No releases found in repository ${GH_REPO}."
+  fi
+  
+  # Extract assets from the first release safely
+  echo "$response" | jq -r '.[0].assets[]? | "\(.name) \(.browser_download_url)"'
 }
 
 validate_platform() {
