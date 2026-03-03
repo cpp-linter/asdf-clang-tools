@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.1.0...v1.1.1) (2026-03-03)
+
+
+### Bug Fixes
+
+* make more robust and expands CI coverage for new macOS and toolchain versions ([#29](https://github.com/cpp-linter/asdf-clang-tools/issues/29)) ([3ff7d08](https://github.com/cpp-linter/asdf-clang-tools/commit/3ff7d08b414605c61885a45b9d14ea64da7613d0))
+* update install-asdf.sh to fix lint fail ([e95b0bc](https://github.com/cpp-linter/asdf-clang-tools/commit/e95b0bc7875ca7f0eae370239514d5b3e20f9a5b))
+
 ## [1.1.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.0.0...v1.1.0) (2025-07-31)
 
 
