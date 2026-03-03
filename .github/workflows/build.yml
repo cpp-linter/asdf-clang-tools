@@ -27,12 +27,14 @@ jobs:
         version: ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]
 
     steps:
+      - uses: actions/checkout@v5
+
       - name: Install asdf
         uses: asdf-vm/actions/setup@v4
 
       - name: Add plugin ${{ matrix.tool.plugin }}
         run: |
-          asdf plugin add ${{ matrix.tool.plugin }} https://github.com/cpp-linter/asdf-clang-tools.git
+          asdf plugin add ${{ matrix.tool.plugin }} "$GITHUB_WORKSPACE"
 
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         run: |
