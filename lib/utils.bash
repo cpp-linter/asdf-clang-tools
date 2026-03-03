@@ -46,9 +46,34 @@ sort_versions() {
 }
 
 fetch_all_assets() {
-  curl "${curl_opts[@]}" -H "Accept: application/vnd.github.v3+json" \
-    "https://api.github.com/repos/${GH_REPO}/releases" |
-    jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+  # Build API-specific curl options without -f so we can read the error body
+  local api_curl_opts=(-sSL)
+  if [ -n "${GITHUB_TOKEN:-}" ]; then
+    api_curl_opts+=(-H "Authorization: token $GITHUB_TOKEN")
+  fi
+
+  local response attempt
+  for attempt in 1 2 3; do
+    response=$(curl "${api_curl_opts[@]}" \
+      -H "Accept: application/vnd.github.v3+json" \
+      "https://api.github.com/repos/${GH_REPO}/releases")
+
+    if echo "$response" | jq -e 'type == "array"' >/dev/null 2>&1; then
+      echo "$response" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+      return 0
+    fi
+
+    local msg
+    msg=$(echo "$response" | jq -r '.message // "unexpected response"' 2>/dev/null || echo "invalid JSON")
+    log "GitHub API error (attempt $attempt/3): $msg"
+
+    if [ "$attempt" -lt 3 ]; then
+      log "Retrying in $((attempt * 15))s..."
+      sleep "$((attempt * 15))"
+    fi
+  done
+
+  fail "GitHub API error after 3 attempts: $msg"
 }
 
 validate_platform() {
