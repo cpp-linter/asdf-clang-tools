@@ -62,8 +62,16 @@ validate_platform() {
 
   case $kernel in
   Darwin)
-    USE_KERNEL=macosx
-    USE_ARCH=amd64
+    case $arch in
+    arm64)
+      USE_KERNEL=macosx
+      USE_ARCH=arm64
+      ;;
+    x86_64)
+      USE_KERNEL=macos-intel
+      USE_ARCH=amd64
+      ;;
+    esac
     ;;
   Linux)
     USE_KERNEL=linux
