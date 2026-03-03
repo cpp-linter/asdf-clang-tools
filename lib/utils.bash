@@ -63,7 +63,14 @@ validate_platform() {
   case $kernel in
   Darwin)
     USE_KERNEL=macosx
-    USE_ARCH=amd64
+    case $arch in
+    x86_64)
+      USE_PLATFORM=macos-intel-amd64
+      ;;
+    arm64)
+      USE_PLATFORM=macosx-arm64
+      ;;
+    esac
     ;;
   Linux)
     USE_KERNEL=linux
@@ -77,10 +84,13 @@ validate_platform() {
         ;;
       esac
     fi
+    if [ -n "${USE_ARCH}" ]; then
+      USE_PLATFORM="${USE_KERNEL}-${USE_ARCH}"
+    fi
     ;;
   esac
 
-  if [ -z "${USE_KERNEL}" ] || [ -z "${USE_ARCH}" ]; then
+  if [ -z "${USE_KERNEL}" ] || [ -z "${USE_PLATFORM}" ]; then
     local msg="Unsupported platform '${kernel}-${arch}'."
     if [ "$USE_KERNEL" = "linux" ]; then
       msg="${msg}\n\nSee the 'ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH' setting."
@@ -88,8 +98,6 @@ validate_platform() {
 
     fail "$msg"
   fi
-
-  USE_PLATFORM="${USE_KERNEL}-${USE_ARCH}"
 }
 
 list_all_versions() {
