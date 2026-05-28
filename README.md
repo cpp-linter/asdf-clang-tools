@@ -17,11 +17,17 @@ This is an asdf plugin for installing several clang tools:
 
 This plugin uses the pre-compiled binaries from the very handy [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries) repo.
 
+## Supported Versions
+
+Clang versions **12** through **22** are supported.
+
 ## Caveats
 
 - Again, the source for these binaries is currently [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries). Please make sure you trust that repository.
-- Only Intel (`x86_64`/`amd64`) binaries are currently provided.
-  - These binaries do work on macOS with Apple Silicon, but they will run under Rosetta.
+- Pre-compiled binaries are provided for:
+  - Linux: `amd64` (`x86_64`), `arm64` (`aarch64`)
+  - macOS: `amd64` (Intel), `arm64` (Apple Silicon)
+  - Windows: `amd64` (`x86_64`)
 - Signed binaries are not provided for macOS. This plugin will offer to de-quarantine the binaries for you, but please make sure you understand the consequences.
 
 # Dependencies
@@ -70,7 +76,7 @@ install & manage versions.
 ## Environment Variables
 
 - `ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE`: set to "1" to automatically de-quarantine binaries. Otherwise, it will interactively ask to do so.
-- `ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH`: set to "1" to install the `amd64` binary regardless of the host architecture. The [clang-tools](https://github.com/cpp-linter/clang-tools-static-binaries) project does not currently provide `arm64`/`aarch64` Linux binaries. This assumes that you have set up [QEMU User Emulation](https://wiki.debian.org/QemuUserEmulation) (or similar) to run foreign binaries under emulation.
+- `ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH`: set to "1" to install the `amd64` binary regardless of the host architecture. This can be useful if you have set up [QEMU User Emulation](https://wiki.debian.org/QemuUserEmulation) (or similar) to run foreign binaries under emulation. Normally, the native `arm64`/`aarch64` Linux binaries are used automatically when detected.
 
 # Contributing
 

@@ -89,11 +89,11 @@ validate_platform() {
   Darwin)
     case $arch in
     arm64)
-      USE_KERNEL=macosx
+      USE_KERNEL=macos
       USE_ARCH=arm64
       ;;
     x86_64)
-      USE_KERNEL=macos-intel
+      USE_KERNEL=macos
       USE_ARCH=amd64
       ;;
     esac
@@ -107,6 +107,9 @@ validate_platform() {
       case $arch in
       x86_64)
         USE_ARCH=amd64
+        ;;
+      arm64 | aarch64)
+        USE_ARCH=arm64
         ;;
       esac
     fi
