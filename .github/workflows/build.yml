@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.editorconfig'
+      - '.pre-commit-config.yaml'
+      - 'LICENSE'
+      - '.github/**'
   workflow_dispatch:
 
 jobs:
