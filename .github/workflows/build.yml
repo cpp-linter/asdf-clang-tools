@@ -5,6 +5,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - '.editorconfig'
+      - '.pre-commit-config.yaml'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST/**'
+      - '.github/FUNDING.yml'
+      - '.github/dependabot.yml'
   workflow_dispatch:
 
 jobs:
