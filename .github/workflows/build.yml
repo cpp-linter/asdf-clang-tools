@@ -10,7 +10,10 @@ on:
       - '.editorconfig'
       - '.pre-commit-config.yaml'
       - 'LICENSE'
-      - '.github/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST/**'
+      - '.github/FUNDING.yml'
+      - '.github/dependabot.yml'
   workflow_dispatch:
 
 jobs:
