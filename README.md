@@ -17,6 +17,10 @@ This is an asdf plugin for installing several clang tools:
 
 This plugin uses the pre-compiled binaries from the very handy [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries) repo.
 
+## Supported Versions
+
+Clang versions **12** through **22** are supported.
+
 ## Caveats
 
 - Again, the source for these binaries is currently [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries). Please make sure you trust that repository.
