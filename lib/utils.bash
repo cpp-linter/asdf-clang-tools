@@ -108,6 +108,9 @@ validate_platform() {
       x86_64)
         USE_ARCH=amd64
         ;;
+      arm64 | aarch64)
+        USE_ARCH=arm64
+        ;;
       esac
     fi
     ;;
