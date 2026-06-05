@@ -19,7 +19,7 @@ This plugin uses the pre-compiled binaries from the very handy [cpp-linter/clang
 
 ## Supported Versions
 
-Clang versions **12** through **22** are supported.
+Clang versions **11** through **22** are supported.
 
 ## Caveats
 
