@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.1.1...v1.2.0) (2026-06-05)
+
+
+### Features
+
+* add Linux ARM64 support and update architecture docs ([#35](https://github.com/cpp-linter/asdf-clang-tools/issues/35)) ([fe3fd0a](https://github.com/cpp-linter/asdf-clang-tools/commit/fe3fd0ab64f91818c0c31137f6dadec57eaba90a))
+
 ## [1.1.1](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.1.0...v1.1.1) (2026-03-03)
 
 
