@@ -4,6 +4,8 @@
 
 [clang-tools](https://github.com/cpp-linter/asdf-clang-tools) plugin for the [asdf version manager](https://asdf-vm.com).
 
+> [![cpp-linter hub](https://img.shields.io/badge/%F0%9F%8F%A0_cpp--linter_hub-%E2%86%90_home-22863a)](https://cpp-linter.github.io/)
+
 </div>
 
 # Overview
