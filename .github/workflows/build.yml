@@ -46,15 +46,6 @@ jobs:
       - name: Install asdf
         uses: asdf-vm/actions/setup@v4
 
-      - name: Install jq (Windows)
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          if ! command -v jq >/dev/null 2>&1; then
-            curl -fsSL -o /usr/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe
-            chmod +x /usr/bin/jq
-          fi
-
       - name: Add plugin ${{ matrix.tool.plugin }}
         shell: bash
         run: |
