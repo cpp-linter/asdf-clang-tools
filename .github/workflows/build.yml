@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-15-intel]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel, windows-11-arm64]
         tool:
           - plugin: clang-format
             command: clang-format --version
@@ -46,11 +46,22 @@ jobs:
       - name: Install asdf
         uses: asdf-vm/actions/setup@v4
 
+      - name: Install jq (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            curl -fsSL -o /usr/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-windows-amd64.exe
+            chmod +x /usr/bin/jq
+          fi
+
       - name: Add plugin ${{ matrix.tool.plugin }}
+        shell: bash
         run: |
           asdf plugin add ${{ matrix.tool.plugin }} "$GITHUB_WORKSPACE"
 
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
+        shell: bash
         run: |
           asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}

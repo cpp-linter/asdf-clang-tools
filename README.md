@@ -29,7 +29,7 @@ Clang versions **11** through **22** are supported.
 - Pre-compiled binaries are provided for:
   - Linux: `amd64` (`x86_64`), `arm64` (`aarch64`)
   - macOS: `amd64` (Intel), `arm64` (Apple Silicon)
-  - Windows: `amd64` (`x86_64`)
+  - Windows: `amd64` (`x86_64`), `arm64`
 - Signed binaries are not provided for macOS. This plugin will offer to de-quarantine the binaries for you, but please make sure you understand the consequences.
 
 # Dependencies
