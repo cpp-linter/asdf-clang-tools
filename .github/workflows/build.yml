@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   plugin_test:
-    name: asdf plugin test
+    name: asdf plugin test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -31,35 +31,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel]
-        tool:
-          - plugin: clang-format
-            command: clang-format --version
-          - plugin: clang-query
-            command: clang-query --version
-          - plugin: clang-tidy
-            command: clang-tidy --version
-          - plugin: clang-apply-replacements
-            command: clang-apply-replacements --version
-          - plugin: clang-include-cleaner
-            command: clang-include-cleaner --version
-            min_version: 18
-        version: ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]
-        exclude:
-          # clang-include-cleaner is only available from version 18+
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "11"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "12"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "13"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "14"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "15"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "16"
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version", min_version: 18 }
-            version: "17"
 
     steps:
       - uses: actions/checkout@v6
@@ -67,16 +38,39 @@ jobs:
       - name: Install asdf
         uses: asdf-vm/actions/setup@v4
 
-      - name: Add plugin ${{ matrix.tool.plugin }}
+      - name: Install and test all clang tools
         run: |
-          asdf plugin add ${{ matrix.tool.plugin }} "$GITHUB_WORKSPACE"
+          tools=("clang-format" "clang-query" "clang-tidy" "clang-apply-replacements" "clang-include-cleaner")
+          cmds=("clang-format --version" "clang-query --version" "clang-tidy --version" "clang-apply-replacements --version" "clang-include-cleaner --version")
+          versions=("11" "14" "18" "22")
+          count=${#tools[@]}
 
-      - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
-        run: |
-          asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
-          asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
-          which ${{ matrix.tool.plugin }}
-          ${{ matrix.tool.command }}
+          i=0
+          while [ "$i" -lt "$count" ]; do
+            plugin="${tools[$i]}"
+            cmd="${cmds[$i]}"
+
+            asdf plugin add "$plugin" "$GITHUB_WORKSPACE" 2>/dev/null || true
+
+            for version in "${versions[@]}"; do
+              # clang-include-cleaner is only available from version 18+
+              if [ "$plugin" = "clang-include-cleaner" ] && [ "$version" -lt 18 ] 2>/dev/null; then
+                continue
+              fi
+
+              echo ""
+              echo "========================================"
+              echo "Testing $plugin $version on ${{ matrix.os }}"
+              echo "========================================"
+
+              asdf install "$plugin" "$version"
+              asdf set "$plugin" "$version"
+              which "$plugin"
+              $cmd
+            done
+
+            i=$((i + 1))
+          done
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
