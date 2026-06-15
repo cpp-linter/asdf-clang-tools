@@ -114,6 +114,17 @@ validate_platform() {
       esac
     fi
     ;;
+  MINGW* | MSYS* | CYGWIN*)
+    USE_KERNEL=windows
+    case $arch in
+    x86_64)
+      USE_ARCH=amd64
+      ;;
+    arm64 | aarch64)
+      USE_ARCH=arm64
+      ;;
+    esac
+    ;;
   esac
 
   if [ -z "${USE_KERNEL}" ] || [ -z "${USE_ARCH}" ]; then
@@ -143,15 +154,22 @@ list_all_versions() {
 }
 
 download_release() {
-  local toolname version url
+  local toolname version url asset_pattern
   toolname="$1"
   version="$2"
 
   validate_platform
 
+  # Windows assets have an .exe extension
+  if [ "$USE_KERNEL" = "windows" ]; then
+    asset_pattern="^${toolname}-${version}_${USE_PLATFORM}.exe\s"
+  else
+    asset_pattern="^${toolname}-${version}_${USE_PLATFORM}\s"
+  fi
+
   # TODO: split output without piping to awk
   url=$(fetch_all_assets |
-    grep "^${toolname}-${version}_${USE_PLATFORM}\s" |
+    grep "$asset_pattern" |
     awk '{print $2}')
 
   (
@@ -208,6 +226,10 @@ install_version() {
 
     # TODO: detect this instead of hard-coding in case the format changes?
     full_tool_cmd=${toolname}-${version}_${USE_PLATFORM}
+    # Windows assets have an .exe extension
+    if [ "$USE_KERNEL" = "windows" ]; then
+      full_tool_cmd="${full_tool_cmd}.exe"
+    fi
     tool_cmd="$(echo "$toolname" | cut -d' ' -f1)"
 
     chmod +x "${asset_path}/${full_tool_cmd}"
