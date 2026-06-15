@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-15-intel]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-15-intel]
         tool:
           - plugin: clang-format
             command: clang-format --version
@@ -79,50 +79,4 @@ jobs:
           ${{ matrix.tool.command }}
         env:
           ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE: 1
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  plugin_test_arm:
-    name: asdf plugin test (ARM)
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-24.04-arm]
-        tool:
-          - plugin: clang-format
-            command: clang-format --version
-          - plugin: clang-query
-            command: clang-query --version
-          - plugin: clang-tidy
-            command: clang-tidy --version
-          - plugin: clang-apply-replacements
-            command: clang-apply-replacements --version
-          - plugin: clang-include-cleaner
-            command: clang-include-cleaner --version
-        version: ["11", "18", "22"]
-        exclude:
-          # clang-include-cleaner only exists from version 18+
-          - tool: { plugin: clang-include-cleaner, command: "clang-include-cleaner --version" }
-            version: "11"
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install asdf
-        uses: asdf-vm/actions/setup@v4
-
-      - name: Add plugin ${{ matrix.tool.plugin }}
-        run: |
-          asdf plugin add ${{ matrix.tool.plugin }} "$GITHUB_WORKSPACE"
-
-      - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
-        run: |
-          asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
-          asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
-          which ${{ matrix.tool.plugin }}
-          ${{ matrix.tool.command }}
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
