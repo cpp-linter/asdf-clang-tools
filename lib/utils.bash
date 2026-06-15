@@ -46,6 +46,13 @@ sort_versions() {
 }
 
 fetch_all_assets() {
+  # Reuse cached result to avoid redundant API calls within the same job
+  local cache_file="${TMPDIR:-/tmp}/asdf-clang-tools-assets-$$"
+  if [ -f "$cache_file" ]; then
+    cat "$cache_file"
+    return 0
+  fi
+
   # Build API-specific curl options without -f so we can read the error body
   local api_curl_opts=(-sSL)
   if [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -59,7 +66,7 @@ fetch_all_assets() {
       "https://api.github.com/repos/${GH_REPO}/releases")
 
     if echo "$response" | jq -e 'type == "array"' >/dev/null 2>&1; then
-      echo "$response" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"'
+      echo "$response" | jq -r '.[0].assets[] | "\(.name) \(.browser_download_url)"' | tee "$cache_file"
       return 0
     fi
 
