@@ -16,6 +16,7 @@ This is an asdf plugin for installing several clang tools:
 - clang-tidy
 - clang-query
 - clang-apply-replacements
+- clang-include-cleaner (version 18+)
 
 This plugin uses the pre-compiled binaries from the very handy [cpp-linter/clang-tools-static-binaries](https://github.com/cpp-linter/clang-tools-static-binaries) repo.
 
@@ -29,8 +30,9 @@ Clang versions **11** through **22** are supported.
 - Pre-compiled binaries are provided for:
   - Linux: `amd64` (`x86_64`), `arm64` (`aarch64`)
   - macOS: `amd64` (Intel), `arm64` (Apple Silicon)
-  - Windows: `amd64` (`x86_64`)
+  - Windows: `amd64` (`x86_64`), `arm64` (`aarch64`)
 - Signed binaries are not provided for macOS. This plugin will offer to de-quarantine the binaries for you, but please make sure you understand the consequences.
+- `clang-include-cleaner` is only available from version 18 onward.
 
 # Dependencies
 
@@ -47,6 +49,7 @@ Plugin:
 | clang-query  | `asdf plugin add clang-query https://github.com/cpp-linter/asdf-clang-tools.git`  |
 | clang-tidy   | `asdf plugin add clang-tidy https://github.com/cpp-linter/asdf-clang-tools.git`   |
 | clang-apply-replacements | `asdf plugin add clang-apply-replacements https://github.com/cpp-linter/asdf-clang-tools.git` |
+| clang-include-cleaner | `asdf plugin add clang-include-cleaner https://github.com/cpp-linter/asdf-clang-tools.git` |
 
 Example:
 
