@@ -235,7 +235,12 @@ install_version() {
     chmod +x "${asset_path}/${full_tool_cmd}"
 
     mkdir -p "${install_path}/bin" || true
-    ln -s "${asset_path}/${full_tool_cmd}" "$install_path/bin/$tool_cmd"
+    # Use cp on Windows where symlinks may not work
+    if [ "$USE_KERNEL" = "windows" ]; then
+      cp "${asset_path}/${full_tool_cmd}" "$install_path/bin/$tool_cmd"
+    else
+      ln -s "${asset_path}/${full_tool_cmd}" "$install_path/bin/$tool_cmd"
+    fi
 
     if [ "$USE_KERNEL" == "macosx" ]; then
       if [ "$ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE" != 1 ]; then
