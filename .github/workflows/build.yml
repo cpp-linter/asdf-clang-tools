@@ -83,7 +83,18 @@ jobs:
       - name: Install and test ${{ matrix.tool.plugin }} ${{ matrix.version }} on ${{ matrix.os }}
         shell: bash
         run: |
-          asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
+          INSTALL_DIR="$HOME/.asdf/installs/${{ matrix.tool.plugin }}/${{ matrix.version }}"
+          # If the cached install is valid (binary exists and is executable), use it.
+          # Otherwise remove the broken stub so asdf does a fresh install.
+          if [ -x "$INSTALL_DIR/bin/${{ matrix.tool.plugin }}" ]; then
+            echo "Using valid cached install for ${{ matrix.tool.plugin }} ${{ matrix.version }}"
+          else
+            if [ -d "$INSTALL_DIR" ]; then
+              echo "Cached install is broken, removing for fresh install"
+              rm -rf "$INSTALL_DIR"
+            fi
+            asdf install ${{ matrix.tool.plugin }} ${{ matrix.version }}
+          fi
           asdf set ${{ matrix.tool.plugin }} ${{ matrix.version }}
           which ${{ matrix.tool.plugin }}
           ${{ matrix.tool.command }}
