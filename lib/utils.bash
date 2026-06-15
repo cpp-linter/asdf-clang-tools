@@ -11,6 +11,7 @@ PLUGIN_NAME="clang-tools"
 USE_KERNEL=
 USE_ARCH=
 USE_PLATFORM=
+USE_EXE_SUFFIX=
 YES_REGEX='^[Yy](E|e)?(S|s)?$'
 
 fail() {
@@ -121,6 +122,18 @@ validate_platform() {
       esac
     fi
     ;;
+  MINGW* | MSYS* | CYGWIN*)
+    USE_KERNEL=windows
+    USE_EXE_SUFFIX=.exe
+    case $arch in
+    x86_64)
+      USE_ARCH=amd64
+      ;;
+    arm64 | aarch64)
+      USE_ARCH=arm64
+      ;;
+    esac
+    ;;
   esac
 
   if [ -z "${USE_KERNEL}" ] || [ -z "${USE_ARCH}" ]; then
@@ -158,7 +171,7 @@ download_release() {
 
   # TODO: split output without piping to awk
   url=$(fetch_all_assets |
-    grep "^${toolname}-${version}_${USE_PLATFORM}\s" |
+    grep "^${toolname}-${version}_${USE_PLATFORM}${USE_EXE_SUFFIX}\s" |
     awk '{print $2}')
 
   (
@@ -214,7 +227,7 @@ install_version() {
     cp -r "$ASDF_DOWNLOAD_PATH"/* "$asset_path"
 
     # TODO: detect this instead of hard-coding in case the format changes?
-    full_tool_cmd=${toolname}-${version}_${USE_PLATFORM}
+    full_tool_cmd=${toolname}-${version}_${USE_PLATFORM}${USE_EXE_SUFFIX}
     tool_cmd="$(echo "$toolname" | cut -d' ' -f1)"
 
     chmod +x "${asset_path}/${full_tool_cmd}"
