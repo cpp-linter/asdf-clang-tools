@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.2.0...v1.3.0) (2026-06-15)
+
+
+### Features
+
+* add Windows ARM support and clang-include-cleaner tool ([#42](https://github.com/cpp-linter/asdf-clang-tools/issues/42)) ([81a60fb](https://github.com/cpp-linter/asdf-clang-tools/commit/81a60fb99053efab76cec5bc8243cce30ea430d5))
+
 ## [1.2.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.1.1...v1.2.0) (2026-06-05)
 
 
