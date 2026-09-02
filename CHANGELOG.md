@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.4.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.3.0...v1.4.0) (2026-09-02)
+
+
+### Features
+
+* support LLVM 23 ([#46](https://github.com/cpp-linter/asdf-clang-tools/issues/46)) ([fdbc8ec](https://github.com/cpp-linter/asdf-clang-tools/commit/fdbc8ecc1ec4b8249cf21f676161cff1afe581e6))
+
+
+### Bug Fixes
+
+* Plugin Test CI failing because clang v11 was retired upstream ([#48](https://github.com/cpp-linter/asdf-clang-tools/issues/48)) ([5009268](https://github.com/cpp-linter/asdf-clang-tools/commit/500926860f46c8cc428daa0bb6f53114013a416c))
+
 ## [1.3.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.2.0...v1.3.0) (2026-06-15)
 
 
