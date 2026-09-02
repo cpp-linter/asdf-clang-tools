@@ -42,7 +42,7 @@ jobs:
         run: |
           tools=("clang-format" "clang-query" "clang-tidy" "clang-apply-replacements" "clang-include-cleaner")
           cmds=("clang-format --version" "clang-query --version" "clang-tidy --version" "clang-apply-replacements --version" "clang-include-cleaner --version")
-          versions=("11" "14" "18" "23")
+          versions=("12" "14" "18" "23")
           count=${#tools[@]}
 
           i=0
