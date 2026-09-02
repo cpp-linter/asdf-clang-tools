@@ -35,10 +35,11 @@ log() {
 
 curl_opts=(-fsSL)
 
-# NOTE: You might want to remove this if clang-tools is not hosted on GitHub releases.
-if [ -n "${GITHUB_TOKEN:-}" ]; then
-  curl_opts=("${curl_opts[@]}" -H "Authorization: token $GITHUB_TOKEN")
-fi
+# NOTE: no Authorization header here on purpose. GitHub's browser_download_url
+# (used below to fetch the actual asset) returns 404 if a token is sent with
+# the request, even for public repos/assets. The GitHub API calls in
+# fetch_all_assets() authenticate separately, since that's where the token is
+# actually needed to avoid unauthenticated rate limits.
 
 sort_versions() {
   sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
@@ -179,8 +180,17 @@ download_release() {
     curl "${curl_opts[@]}" -O "$url" || fail "Could not download $url"
     # TODO: range request ('-C -') does not seem to work
 
-    # Download checksum
-    curl "${curl_opts[@]}" -O "${url}.sha512sum" || fail "Could not download $url"
+    # clang-tools-static-binaries no longer publishes a per-binary
+    # <asset>.sha512sum sidecar file; it publishes one SHA512SUMS file per
+    # release instead (cpp-linter/clang-tools-static-binaries#119). Fetch
+    # that and pull out just this asset's line, in the same format
+    # check_shasum() already expects.
+    local asset sums_url
+    asset=$(basename "$url")
+    sums_url="${url%/*}/SHA512SUMS"
+    curl "${curl_opts[@]}" -o SHA512SUMS "$sums_url" || fail "Could not download $sums_url"
+    grep -F "  $asset" SHA512SUMS >"${asset}.sha512sum" || fail "Checksum for $asset not found in $sums_url"
+    rm -f SHA512SUMS
   )
 }
 
