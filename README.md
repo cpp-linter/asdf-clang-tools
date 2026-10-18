@@ -64,7 +64,8 @@ Versions are major versions (`21`, not `21.1.0`). `asdf list all <tool>` shows t
 ## Environment variables
 
 - `ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH`: set to "1" to install the `amd64` binary regardless of the host architecture. This can be useful if you have set up [QEMU User Emulation](https://wiki.debian.org/QemuUserEmulation) (or similar) to run foreign binaries under emulation. Normally, the native `arm64`/`aarch64` Linux binaries are used automatically when detected.
-- `GITHUB_TOKEN`: if set, the plugin sends it with the GitHub API request that lists the release's assets, which avoids the lower rate limit for unauthenticated requests (for example in CI).
+- `ASDF_CLANG_TOOLS_INDEX_URL`: where to read the list of versions and files from. Defaults to the [`index.json`](https://cpp-linter.github.io/clang-tools-static-binaries/index.json) of clang-tools-static-binaries; set it to use a mirror. The plugin downloads the URL and checks the SHA-512 that the index gives for each file.
+- `GITHUB_TOKEN`: only used if the index cannot be read, when the plugin falls back to listing the assets of the newest release through the GitHub API. If set, it avoids the lower rate limit for unauthenticated requests (for example in CI).
 
 ## Contributing
 
