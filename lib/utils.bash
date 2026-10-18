@@ -7,6 +7,9 @@ ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=${ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE:-0}
 ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH=${ASDF_CLANG_TOOLS_LINUX_IGNORE_ARCH:-0}
 
 GH_REPO="cpp-linter/clang-tools-static-binaries"
+# index.json lists every supported LLVM version with the download URL and
+# SHA-512 of each tool on each platform (cpp-linter/clang-tools-static-binaries#142).
+INDEX_URL="${ASDF_CLANG_TOOLS_INDEX_URL:-https://cpp-linter.github.io/clang-tools-static-binaries/index.json}"
 PLUGIN_NAME="clang-tools"
 USE_KERNEL=
 USE_ARCH=
@@ -140,12 +143,24 @@ validate_platform() {
   USE_PLATFORM="${USE_KERNEL}-${USE_ARCH}"
 }
 
+fetch_index() {
+  curl "${curl_opts[@]}" "$INDEX_URL" 2>/dev/null
+}
+
 list_all_versions() {
 
   validate_platform
 
-  local toolname=$1
+  local toolname=$1 index
 
+  if index=$(fetch_index); then
+    echo "$index" | jq -r --arg tool "$toolname" --arg platform "$USE_PLATFORM" \
+      '.versions | to_entries[] | select(.value.tools[$tool][$platform] != null) | .key'
+    return
+  fi
+
+  # Fallback for releases made before index.json existed: every version was
+  # in the newest release.
   fetch_all_assets |
     grep "$toolname" |
     grep "$USE_PLATFORM" |
@@ -155,11 +170,36 @@ list_all_versions() {
 }
 
 download_release() {
-  local toolname version url asset_pattern
+  local toolname version index entry url asset sha512
   toolname="$1"
   version="$2"
 
   validate_platform
+
+  if index=$(fetch_index); then
+    entry=$(echo "$index" | jq -r --arg v "$version" --arg tool "$toolname" --arg platform "$USE_PLATFORM" \
+      '.versions[$v].tools[$tool][$platform] // empty | "\(.url) \(.sha512)"')
+    [ -n "$entry" ] || fail "$toolname $version is not available for $USE_PLATFORM (see $INDEX_URL)"
+    url=${entry% *}
+    sha512=${entry##* }
+    asset=$(basename "$url")
+    (
+      cd "${ASDF_DOWNLOAD_PATH}" || exit 1
+      echo "* Downloading $toolname release $version..."
+      curl "${curl_opts[@]}" -O "$url" || fail "Could not download $url"
+      echo "$sha512  $asset" >"${asset}.sha512sum"
+    )
+    return
+  fi
+
+  download_release_from_latest "$toolname" "$version"
+}
+
+# Fallback for releases made before index.json existed.
+download_release_from_latest() {
+  local toolname version url asset_pattern
+  toolname="$1"
+  version="$2"
 
   # Windows assets have an .exe extension
   if [ "$USE_KERNEL" = "windows" ]; then
@@ -180,11 +220,7 @@ download_release() {
     curl "${curl_opts[@]}" -O "$url" || fail "Could not download $url"
     # TODO: range request ('-C -') does not seem to work
 
-    # clang-tools-static-binaries no longer publishes a per-binary
-    # <asset>.sha512sum sidecar file; it publishes one SHA512SUMS file per
-    # release instead (cpp-linter/clang-tools-static-binaries#119). Fetch
-    # that and pull out just this asset's line, in the same format
-    # check_shasum() already expects.
+    # One SHA512SUMS file per release (cpp-linter/clang-tools-static-binaries#119).
     local asset sums_url
     asset=$(basename "$url")
     sums_url="${url%/*}/SHA512SUMS"
