@@ -6,27 +6,37 @@ on:
       - main
   pull_request:
 
+permissions: {}
+
 jobs:
   shellcheck:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install asdf dependencies
-        uses: asdf-vm/actions/install@v4
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47 # v4.0.1
 
       - name: Run ShellCheck
         run: scripts/shellcheck.bash
 
   shellfmt:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Install asdf dependencies
-        uses: asdf-vm/actions/install@v4
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47 # v4.0.1
 
       - name: List file to shfmt
         run: shfmt -f .
@@ -35,7 +45,7 @@ jobs:
         run: scripts/shfmt.bash
 
       - name: Run pre-commit hooks
-        uses: pre-commit/action@v3.0.1
+        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
         with:
           extra_args: --all-files
         env:
