@@ -238,8 +238,7 @@ check_shasum() {
   elif command -v shasum >/dev/null; then
     sha_cmd=(shasum -a 512)
   else
-    log "WARNING: sha512sum/shasum program not found - unable to checksum. Proceed with caution."
-    return 0
+    fail "Required dependency 'sha512sum' or 'shasum' not found: it is needed to check the download."
   fi
 
   (
@@ -288,22 +287,20 @@ install_version() {
       ln -s "${asset_path}/${full_tool_cmd}" "$install_path/bin/$tool_cmd"
     fi
 
-    if [ "$USE_KERNEL" == "macosx" ]; then
+    # curl does not set the quarantine attribute, so this only runs when
+    # something else has set it on the downloaded file.
+    if [ "$USE_KERNEL" = "macos" ] &&
+      xattr -p com.apple.quarantine "${asset_path}/${full_tool_cmd}" >/dev/null 2>&1; then
       if [ "$ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE" != 1 ]; then
         log "$toolname needs to be de-quarantined to run:\n\n"
-        echo -e "  xattr -dr com.apple.quarantine \"${asset_path}/${full_tool_cmd}\""
+        echo -e "  xattr -d com.apple.quarantine \"${asset_path}/${full_tool_cmd}\""
         echo -e -n "\n\nProceed? [y/N] "
         read -r reply
-        if [[ $reply =~ $YES_REGEX ]]; then
-          ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=1
-        else
+        if [[ ! $reply =~ $YES_REGEX ]]; then
           exit 1
         fi
-
-        if [ "$ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE" == 1 ]; then
-          xattr -dr com.apple.quarantine "${asset_path}/${full_tool_cmd}"
-        fi
       fi
+      xattr -d com.apple.quarantine "${asset_path}/${full_tool_cmd}"
     fi
 
     test -x "$install_path/bin/$tool_cmd" || fail "Expected $install_path/bin/$tool_cmd to be executable."
