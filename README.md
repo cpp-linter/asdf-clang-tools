@@ -59,7 +59,7 @@ Versions are major versions (`21`, not `21.1.0`). `asdf list all <tool>` shows t
 ## Dependencies
 
 - `curl`, `jq`
-- `sha512sum` or `shasum` (optional, but recommended): checks each download against the release's `SHA512SUMS` file
+- `sha512sum` or `shasum`: checks each download against the SHA-512 that the index (or the release's `SHA512SUMS` file) gives for it. The install fails without one of them.
 
 ## Environment variables
 
