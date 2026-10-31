@@ -47,14 +47,14 @@ Each tool is a separate plugin. Add it by URL, with the tool name as the plugin 
 
 Clang versions **12** through **23** are supported. `clang-include-cleaner` is only available from version 18 onward.
 
-Versions are major versions (`21`, not `21.1.0`). `asdf list all <tool>` shows the versions in the latest [clang-tools-static-binaries release](https://github.com/cpp-linter/clang-tools-static-binaries/releases/latest).
+Versions are major versions (`21`, not `21.1.0`). `asdf list all <tool>` shows the versions in the [`index.json`](https://cpp-linter.github.io/clang-tools-static-binaries/index.json) of clang-tools-static-binaries, and each version installs the newest build that the index lists for it.
 
 ## Platforms
 
 - Pre-compiled binaries are provided for:
   - Linux: `amd64` (`x86_64`), `arm64` (`aarch64`)
   - macOS: `amd64` (Intel), `arm64` (Apple Silicon)
-- The macOS binaries are ad-hoc signed, not notarized. The plugin downloads them with `curl`, which does not set the quarantine attribute, so they run without a Gatekeeper prompt.
+- The macOS binaries are ad-hoc signed, not notarized. The plugin downloads them with `curl`, which does not set the quarantine attribute, so they run without a Gatekeeper prompt. If something else has set the attribute, the plugin asks before removing it; set `ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=1` to remove it without asking.
 
 ## Dependencies
 
