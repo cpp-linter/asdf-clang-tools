@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.4.0...v1.5.0) (2026-10-31)
+
+
+### Features
+
+* read versions and checksums from index.json ([#53](https://github.com/cpp-linter/asdf-clang-tools/issues/53)) ([900a256](https://github.com/cpp-linter/asdf-clang-tools/commit/900a2561b3f940656928e9cf706bd21c29a5d50e))
+
+
+### Bug Fixes
+
+* require a checksum tool and fix the macOS quarantine check ([#56](https://github.com/cpp-linter/asdf-clang-tools/issues/56)) ([e018eb0](https://github.com/cpp-linter/asdf-clang-tools/commit/e018eb08cc885caaf0cd2de61eff56520163403a))
+
 ## [1.4.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.3.0...v1.4.0) (2026-09-02)
 
 
