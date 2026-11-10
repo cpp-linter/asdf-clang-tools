@@ -66,22 +66,23 @@ check() {
   fi
 }
 
-cd "$work"
+# The files are passed by path and the directory is not changed: asdf picks
+# the tool's version from the .tool-versions of the current directory.
 case "$tool" in
 clang-tidy)
-  check clang-tidy --checks='-*,bugprone-*' builtin.cpp -- "${builtin_flags[@]}"
+  check clang-tidy --checks='-*,bugprone-*' "$work/builtin.cpp" -- "${builtin_flags[@]}"
   if [ -n "$hosted" ]; then
-    check clang-tidy --checks='-*,bugprone-*' hosted.c --
+    check clang-tidy --checks='-*,bugprone-*' "$work/hosted.c" --
   fi
   ;;
 clang-query)
-  check clang-query -c 'match varDecl(hasName("pointer"))' builtin.cpp -- "${builtin_flags[@]}"
+  check clang-query -c 'match varDecl(hasName("pointer"))' "$work/builtin.cpp" -- "${builtin_flags[@]}"
   if [ -n "$hosted" ]; then
-    check clang-query -c 'match varDecl(hasName("pointer"))' hosted.c --
+    check clang-query -c 'match varDecl(hasName("pointer"))' "$work/hosted.c" --
   fi
   ;;
 clang-include-cleaner)
-  check clang-include-cleaner --print=changes builtin.cpp -- "${builtin_flags[@]}"
+  check clang-include-cleaner --print=changes "$work/builtin.cpp" -- "${builtin_flags[@]}"
   ;;
 *)
   echo "No code test for $tool"
