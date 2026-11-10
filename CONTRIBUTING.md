@@ -60,6 +60,13 @@ asdf set clang-format latest
 clang-format --version
 ```
 
+`--version` does not show whether a tool can parse code. After installing `clang-tidy`, `clang-query` or `clang-include-cleaner`, run it on the test code that CI uses:
+
+```shell
+scripts/test-code.bash clang-tidy          # needs only clang's builtin headers
+scripts/test-code.bash clang-tidy hosted   # also a file that includes the C library
+```
+
 ## Code Style
 
 This project follows these conventions:

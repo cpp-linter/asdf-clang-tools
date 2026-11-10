@@ -43,6 +43,15 @@ Each tool is a separate plugin. Add it by URL, with the tool name as the plugin 
 | clang-apply-replacements | `asdf plugin add clang-apply-replacements https://github.com/cpp-linter/asdf-clang-tools.git` |
 | clang-include-cleaner | `asdf plugin add clang-include-cleaner https://github.com/cpp-linter/asdf-clang-tools.git` |
 
+### mise
+
+[mise](https://mise.jdx.dev) runs asdf plugins. Add the plugin under the tool's name, then use it like any other tool:
+
+```shell
+mise plugins install clang-format https://github.com/cpp-linter/asdf-clang-tools.git
+mise use clang-format@21
+```
+
 ## Supported versions
 
 Clang versions **12** through **23** are supported. `clang-include-cleaner` is only available from version 18 onward.
@@ -54,6 +63,8 @@ Versions are major versions (`21`, not `21.1.0`). `asdf list all <tool>` shows t
 - Pre-compiled binaries are provided for:
   - Linux: `amd64` (`x86_64`), `arm64` (`aarch64`)
   - macOS: `amd64` (Intel), `arm64` (Apple Silicon)
+- `clang-tidy`, `clang-query` and `clang-include-cleaner` parse code the way the compiler does, so the plugin installs clang's builtin headers (`stddef.h`, `stdarg.h` and others) next to them, in `lib/clang/<version>/include` of the install folder.
+- On macOS the C and C++ standard headers are in the Xcode or Command Line Tools SDK. For these three tools the plugin sets `SDKROOT` to the path that `xcrun --show-sdk-path` prints, unless `SDKROOT` is already set, so they find `stdio.h` and `<string>` without `-isysroot` in the compile command. The C++ headers of a recent SDK can use builtins that an old clang does not know, so check C++ code with a recent LLVM version.
 - The macOS binaries are ad-hoc signed, not notarized. The plugin downloads them with `curl`, which does not set the quarantine attribute, so they run without a Gatekeeper prompt. If something else has set the attribute, the plugin asks before removing it; set `ASDF_CLANG_TOOLS_MACOS_DEQUARANTINE=1` to remove it without asking.
 
 ## Dependencies

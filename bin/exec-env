@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# asdf loads this file before it runs an installed tool.
+#
+# On macOS the C and C++ standard headers are in the Xcode or Command Line
+# Tools SDK, and /usr/include does not exist. Apple's clang finds the SDK by
+# itself, but these binaries are built from upstream LLVM and stop at
+# "'ctype.h' file not found" unless SDKROOT or -isysroot names the SDK.
+# An SDKROOT that is already set is kept.
+if [ "$(uname -s)" = "Darwin" ] && [ -z "${SDKROOT:-}" ]; then
+  case "$(basename "$(dirname "$(dirname "${BASH_SOURCE[0]}")")")" in
+  clang-tidy | clang-query | clang-include-cleaner)
+    asdf_clang_tools_sdk=$(xcrun --show-sdk-path 2>/dev/null || true)
+    if [ -n "$asdf_clang_tools_sdk" ]; then
+      export SDKROOT="$asdf_clang_tools_sdk"
+    fi
+    unset asdf_clang_tools_sdk
+    ;;
+  esac
+fi

@@ -73,6 +73,16 @@ jobs:
               asdf set "$plugin" "$version"
               which "$plugin"
               $cmd
+
+              # Run the tool on code, which needs clang's builtin headers. A file
+              # that includes the C library is also checked on Linux, and on macOS
+              # with the newest version: an old clang cannot always parse the
+              # headers of a new macOS SDK.
+              hosted=""
+              if [ "$RUNNER_OS" = "Linux" ] || [ "$version" = "23" ]; then
+                hosted="hosted"
+              fi
+              "$GITHUB_WORKSPACE/scripts/test-code.bash" "$plugin" "$hosted"
             done
 
             i=$((i + 1))

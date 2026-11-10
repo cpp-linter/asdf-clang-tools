@@ -169,6 +169,41 @@ list_all_versions() {
     sed "s/^${toolname}-\(.*\)_.*/\1/"
 }
 
+# Tools that parse code the way the compiler does. They need clang's builtin
+# headers (stddef.h, stdarg.h, ...), which clang looks for in
+# <directory of the executable>/../lib/clang/<version>/include. Without them
+# they stop at the first standard include: 'stddef.h' file not found.
+needs_resource_headers() {
+  case "$1" in
+  clang-tidy | clang-query | clang-include-cleaner) return 0 ;;
+  *) return 1 ;;
+  esac
+}
+
+# Downloads clang-resource-headers-<version>.tar.gz, which is the same for
+# every platform. A release built before October 2026 has none in the index.
+download_resource_headers() {
+  local index version entry url asset sha512
+  index="$1"
+  version="$2"
+
+  entry=$(echo "$index" | jq -r --arg v "$version" \
+    '.versions[$v].resource_headers // empty | "\(.url) \(.sha512)"')
+  if [ -z "$entry" ]; then
+    log "No clang builtin headers for version $version in $INDEX_URL; standard includes such as <stddef.h> will not be found."
+    return
+  fi
+  url=${entry% *}
+  sha512=${entry##* }
+  asset=$(basename "$url")
+  (
+    cd "${ASDF_DOWNLOAD_PATH}" || exit 1
+    echo "* Downloading clang's builtin headers for version $version..."
+    curl "${curl_opts[@]}" -O "$url" || fail "Could not download $url"
+    echo "$sha512  $asset" >"${asset}.sha512sum"
+  )
+}
+
 download_release() {
   local toolname version index entry url asset sha512
   toolname="$1"
@@ -189,6 +224,9 @@ download_release() {
       curl "${curl_opts[@]}" -O "$url" || fail "Could not download $url"
       echo "$sha512  $asset" >"${asset}.sha512sum"
     )
+    if needs_resource_headers "$toolname"; then
+      download_resource_headers "$index" "$version"
+    fi
     return
   fi
 
@@ -278,6 +316,15 @@ install_version() {
     tool_cmd="$(echo "$toolname" | cut -d' ' -f1)"
 
     chmod +x "${asset_path}/${full_tool_cmd}"
+
+    # clang's builtin headers go to <install path>/lib/clang/<version>/include,
+    # where the tool looks for them: ../lib/clang relative to its executable.
+    local headers
+    for headers in "$asset_path"/clang-resource-headers-*.tar.gz; do
+      [ -f "$headers" ] || continue
+      tar -xzf "$headers" -C "$install_path"
+      rm -f "$headers"
+    done
 
     mkdir -p "${install_path}/bin" || true
     # Use cp on Windows where symlinks may not work
