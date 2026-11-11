@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.5.0...v1.5.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* install clang's builtin headers with clang-tidy, clang-query and clang-include-cleaner ([#58](https://github.com/cpp-linter/asdf-clang-tools/issues/58)) ([80dc59f](https://github.com/cpp-linter/asdf-clang-tools/commit/80dc59fd3c701c873addcd4af6fc1a878f6d919c))
+
 ## [1.5.0](https://github.com/cpp-linter/asdf-clang-tools/compare/v1.4.0...v1.5.0) (2026-10-31)
 
 
